@@ -3,6 +3,7 @@ import { LoginType } from "./types";
 import { socket } from "../../socket";
 import { WebGameEvents, type TUser } from "../../types";
 import { gameStore } from "../game/game-store";
+import { v4 as uuid } from "uuid";
 
 class LoginStore {
   name: string = "";
@@ -28,7 +29,7 @@ class LoginStore {
   public async joinRoom() {
     const user: TUser = {
       name: this.name,
-      id: crypto.randomUUID(),
+      id: uuid(),
     };
 
     socket.emit(WebGameEvents.JoinRoom, {
