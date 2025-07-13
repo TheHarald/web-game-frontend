@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { loginStore } from "../login-store";
-import { Button, Input, Tab, Tabs } from "@heroui/react";
+import { Button, Input, InputOtp, Tab, Tabs } from "@heroui/react";
 import { LoginType } from "../types";
 import {
   ArrowLeftEndOnRectangleIcon,
@@ -25,7 +25,10 @@ export const LoginPage = observer(() => {
   const disableJoin = !name || !roomId;
 
   return (
-    <div className="flex w-1/3 flex-col gap-2 items-center p-4 bg-neutral-900 rounded-lg">
+    <div
+      style={{ width: 400 }}
+      className="flex flex-col gap-2 items-center p-4 bg-neutral-900 rounded-lg"
+    >
       <div className="text-large font-bold">Вход</div>
 
       <Tabs
@@ -43,11 +46,16 @@ export const LoginPage = observer(() => {
         placeholder="Имя"
       />
       {loginType === LoginType.Join ? (
-        <Input
-          value={roomId}
-          onChange={(event) => loginStore.setRoomId(event.target.value)}
-          placeholder="Код комнаты"
-        />
+        <div className="flex flex-col g-2 items-center">
+          <div>Код комнаты</div>
+          <InputOtp
+            allowedKeys="^[a-z]*$"
+            size="lg"
+            length={4}
+            value={roomId}
+            onValueChange={(value) => loginStore.setRoomId(value)}
+          />
+        </div>
       ) : null}
       {loginType === LoginType.Create ? (
         <Button
