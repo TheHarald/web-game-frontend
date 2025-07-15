@@ -1,14 +1,14 @@
 import { observer } from "mobx-react-lite";
-import { loginStore } from "../login-store";
 import { Button, Input, InputOtp, Tab, Tabs } from "@heroui/react";
 import { LoginType } from "../types";
 import {
   ArrowLeftEndOnRectangleIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
+import { gameStore } from "../game-store";
 
 export const LoginPage = observer(() => {
-  const { name, roomId, loginType } = loginStore;
+  const { name, roomId, loginType } = gameStore.loginForm;
 
   const options = [
     {
@@ -33,7 +33,9 @@ export const LoginPage = observer(() => {
 
       <Tabs
         selectedKey={loginType}
-        onSelectionChange={(key) => loginStore.setLoginType(key as LoginType)}
+        onSelectionChange={(key) =>
+          gameStore.setFormLoginType(key as LoginType)
+        }
         color="primary"
       >
         {options.map(({ title, key }) => (
@@ -42,7 +44,7 @@ export const LoginPage = observer(() => {
       </Tabs>
       <Input
         value={name}
-        onChange={(event) => loginStore.setName(event.target.value)}
+        onChange={(event) => gameStore.setFormName(event.target.value)}
         placeholder="Имя"
       />
       {loginType === LoginType.Join ? (
@@ -53,7 +55,7 @@ export const LoginPage = observer(() => {
             size="lg"
             length={4}
             value={roomId}
-            onValueChange={(value) => loginStore.setRoomId(value)}
+            onValueChange={(value) => gameStore.setFormRoomId(value)}
           />
         </div>
       ) : null}
@@ -61,7 +63,7 @@ export const LoginPage = observer(() => {
         <Button
           isDisabled={disableCreate}
           endContent={<PlusCircleIcon className="size-6" />}
-          onPress={() => loginStore.createRoom()}
+          onPress={() => gameStore.createRoom()}
           fullWidth
           color="primary"
         >
@@ -72,7 +74,7 @@ export const LoginPage = observer(() => {
         <Button
           isDisabled={disableJoin}
           endContent={<ArrowLeftEndOnRectangleIcon className="size-6" />}
-          onPress={() => loginStore.joinRoom()}
+          onPress={() => gameStore.joinRoom()}
           fullWidth
           color="primary"
         >
