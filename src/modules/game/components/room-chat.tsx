@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { gameStore } from "../game-store";
-import { Button, Chip, Form, Input, ScrollShadow } from "@heroui/react";
+import { Button, Form, Input, ScrollShadow } from "@heroui/react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import { ChatMessage } from "./chat-message";
 
