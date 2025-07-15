@@ -27,6 +27,10 @@ export function SocketEventsHandler() {
       spawnConfetti();
     });
 
+    socket.on(WebGameEvents.ReciveMessage, (message) => {
+      gameStore.reciveMessage(message);
+    });
+
     return () => {
       gameStore.leaveRoom();
     };

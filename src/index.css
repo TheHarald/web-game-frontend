@@ -3,8 +3,24 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-body{
-    overflow: hidden;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
+
+html, body, #root {
+  overflow: hidden; /* Prevent global scrolling */
+}
+
+html,
+body {
+  height: 100vh;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+

@@ -21,13 +21,13 @@ export const LoginPage = observer(() => {
     },
   ];
 
-  const disableCreate = !name;
-  const disableJoin = !name || !roomId;
+  const disableCreate = !/^[a-zA-Zа-яА-ЯёЁ\s\-_]+$/.test(name);
+  const disableJoin = !/^[a-zA-Zа-яА-ЯёЁ\s\-_]+$/.test(name) || !roomId;
 
   return (
     <div
       style={{ width: 400 }}
-      className="flex flex-col gap-2 items-center p-4 bg-neutral-900 rounded-lg"
+      className="flex flex-col gap-2 items-center p-4 bg-neutral-900 rounded-lg-lg"
     >
       <div className="text-large font-bold">Вход</div>
 
@@ -43,6 +43,8 @@ export const LoginPage = observer(() => {
         ))}
       </Tabs>
       <Input
+        pattern={"^[a-zA-Zа-яА-ЯёЁ\s\-_]+$"}
+        errorMessage="Имя должно состоять только из букв"
         value={name}
         onChange={(event) => gameStore.setFormName(event.target.value)}
         placeholder="Имя"
