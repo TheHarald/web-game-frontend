@@ -1,4 +1,4 @@
-import { Card } from "@heroui/react";
+import { Card, User } from "@heroui/react";
 import { observer } from "mobx-react-lite";
 import { PooButton } from "./poo-button";
 import { gameStore } from "../game-store";
@@ -16,14 +16,17 @@ export const RoomUsersList = observer(() => {
       {users.map((user) => {
         const canPoo = settings.CAN_POO_SELF || user.id !== currentUser?.id;
         return (
-          <Card
-            className="flex-row items-center gap-1 p-2 bg-stone-600"
-            key={user.id}
-            radius="sm"
-          >
-            {user.name}
-            {canPoo ? <PooButton userId={user.id} /> : null}
-          </Card>
+          <div className="flex flex-row justify-between gap-1 bg-stone-800 p-2 rounded-lg">
+            <User
+              className=" self-start"
+              key={user.id}
+              name={user.name}
+              description={user.id}
+            />
+            {canPoo ? (
+              <PooButton onPoo={() => gameStore.sendPoo(user.id)} />
+            ) : null}
+          </div>
         );
       })}
     </div>

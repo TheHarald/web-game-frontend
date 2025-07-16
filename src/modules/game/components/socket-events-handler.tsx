@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { WebGameEvents, type TUser } from "../../../types";
 import { gameStore } from "../game-store";
-import { spawnConfetti } from "../../../utils/utils";
+import { spawnConfetti } from "../../../utils/confeti";
 import { socket } from "../../../socket/socket";
 import { settings } from "../../../settings/settings";
 

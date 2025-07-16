@@ -14,6 +14,26 @@ type TChat = {
   yourMessage: string;
 };
 
+enum GameStates {
+  Default = "default",
+  CreateImage = "create-image",
+  CreateMeme = "create-meme",
+  WatchMeme = "watch-meme",
+}
+
+type TGameState = {
+  state: GameStates;
+  imageConstructor: {
+    src: string | undefined;
+    hasError: boolean;
+  };
+  memeConstructor: {
+    imageSrc: string;
+    memeText: string;
+  };
+  memes: unknown[];
+};
+
 const defaultLoginForm: TLoginForm = {
   name: "",
   roomId: "",
@@ -25,12 +45,26 @@ const defaultChatSate: TChat = {
   yourMessage: "",
 };
 
+const defautlGameState: TGameState = {
+  state: GameStates.Default,
+  imageConstructor: {
+    src: undefined,
+    hasError: false,
+  },
+  memeConstructor: {
+    imageSrc: "",
+    memeText: "",
+  },
+  memes: [],
+};
+
 class GameStore {
   roomId: string = "";
   currentUser: TUser | undefined = undefined;
   users: TUser[] = [];
   loginForm = defaultLoginForm;
   chat: TChat = defaultChatSate;
+  game: TGameState = defautlGameState;
 
   constructor() {
     makeAutoObservable(this);
@@ -93,6 +127,19 @@ class GameStore {
     socket.emit(WebGameEvents.CreateRoom, this.loginForm.name);
 
     this.loginForm = defaultLoginForm;
+  }
+
+  public setConstructorImageSrc(src?: string) {
+    this.game.imageConstructor.hasError = false;
+    this.game.imageConstructor.src = src;
+  }
+
+  public setConstructorImageError(hasError: boolean) {
+    this.game.imageConstructor.hasError = hasError;
+  }
+
+  public setMemeText(text: string) {
+    this.game.memeConstructor.memeText = text;
   }
 
   public sendMessage() {

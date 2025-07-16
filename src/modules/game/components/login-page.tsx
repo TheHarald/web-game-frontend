@@ -6,6 +6,9 @@ import {
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { gameStore } from "../game-store";
+import { isMobileDevice } from "../../../utils/is-mobile";
+
+const isMobile = isMobileDevice();
 
 export const LoginPage = observer(() => {
   const { name, roomId, loginType } = gameStore.loginForm;
@@ -98,6 +101,11 @@ export const LoginPage = observer(() => {
         >
           Войти
         </Button>
+      ) : null}
+      {isMobile ? (
+        <div className="text-large">
+          Разрешение экрана не поддерживается😞, но можно попробовать
+        </div>
       ) : null}
     </Form>
   );
