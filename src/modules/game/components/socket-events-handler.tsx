@@ -3,6 +3,7 @@ import { WebGameEvents, type TUser } from "../../../types";
 import { gameStore } from "../game-store";
 import { spawnConfetti } from "../../../utils/utils";
 import { socket } from "../../../socket/socket";
+import { settings } from "../../../settings/settings";
 
 export function SocketEventsHandler() {
   useEffect(() => {
@@ -24,7 +25,9 @@ export function SocketEventsHandler() {
     });
 
     socket.on(WebGameEvents.RecivePoo, () => {
-      spawnConfetti();
+      for (let i = 0; i < settings.POO_COUNT_AT_TIME; i++) {
+        spawnConfetti();
+      }
     });
 
     socket.on(WebGameEvents.ReciveMessage, (message) => {

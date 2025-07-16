@@ -91,6 +91,8 @@ class GameStore {
 
   public createRoom() {
     socket.emit(WebGameEvents.CreateRoom, this.loginForm.name);
+
+    this.loginForm = defaultLoginForm;
   }
 
   public sendMessage() {

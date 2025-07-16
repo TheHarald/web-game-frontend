@@ -24,7 +24,7 @@ export const spawnConfetti = (options: ConfettiOptions = {}) => {
   const {
     emoji = "💩",
     particleCount = 30,
-    duration = 2000,
+    duration = 3000,
     container = document.body,
   } = options;
 
@@ -140,7 +140,3 @@ export const spawnConfetti = (options: ConfettiOptions = {}) => {
     });
   };
 };
-
-// Example usage:
-// spawnConfetti({ emoji: '👨', particleCount: 50 });
-// spawnConfetti({ emoji: '❤️', duration: 3000 });
