@@ -1,4 +1,4 @@
-import { ImageConstructor } from "./image-constructor";
+// import { ImageConstructor } from "./image-constructor";
 import { MemeConstructor } from "./meme-constructor";
 
 export const GameField = () => {

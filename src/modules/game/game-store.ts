@@ -1,5 +1,10 @@
 import { makeAutoObservable } from "mobx";
-import { WebGameEvents, type TMessage, type TUser } from "../../types";
+import {
+  WebGameEvents,
+  WebGameStates,
+  type TMessage,
+  type TUser,
+} from "../../types";
 import { socket } from "../../socket/socket";
 import { LoginType } from "./types";
 
@@ -14,15 +19,8 @@ type TChat = {
   yourMessage: string;
 };
 
-enum GameStates {
-  Default = "default",
-  CreateImage = "create-image",
-  CreateMeme = "create-meme",
-  WatchMeme = "watch-meme",
-}
-
 type TGameState = {
-  state: GameStates;
+  state: WebGameStates;
   imageConstructor: {
     src: string | undefined;
     hasError: boolean;
@@ -46,7 +44,7 @@ const defaultChatSate: TChat = {
 };
 
 const defautlGameState: TGameState = {
-  state: GameStates.Default,
+  state: WebGameStates.WaitStart,
   imageConstructor: {
     src: undefined,
     hasError: false,
