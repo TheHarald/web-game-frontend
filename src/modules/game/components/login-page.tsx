@@ -1,11 +1,14 @@
 import { observer } from "mobx-react-lite";
-import { Button, Input, InputOtp, Tab, Tabs } from "@heroui/react";
+import { Button, Form, Input, InputOtp, Tab, Tabs } from "@heroui/react";
 import { LoginType } from "../types";
 import {
   ArrowLeftEndOnRectangleIcon,
   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
 import { gameStore } from "../game-store";
+import { isMobileDevice } from "../../../utils/is-mobile";
+
+const isMobile = isMobileDevice();
 
 export const LoginPage = observer(() => {
   const { name, roomId, loginType } = gameStore.loginForm;
@@ -24,10 +27,27 @@ export const LoginPage = observer(() => {
   const disableCreate = !/^[a-zA-Zа-яА-ЯёЁ\s\-_]+$/.test(name);
   const disableJoin = !/^[a-zA-Zа-яА-ЯёЁ\s\-_]+$/.test(name) || !roomId;
 
+  const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (loginType === LoginType.Create) {
+      gameStore.createRoom();
+
+      return;
+    }
+
+    if (loginType === LoginType.Join) {
+      gameStore.joinRoom();
+
+      return;
+    }
+  };
+
   return (
-    <div
+    <Form
       style={{ width: 400 }}
       className="flex flex-col gap-2 items-center p-4 bg-neutral-900 rounded-lg-lg"
+      onSubmit={submitHandler}
     >
       <div className="text-large font-bold">Вход</div>
 
@@ -43,7 +63,6 @@ export const LoginPage = observer(() => {
         ))}
       </Tabs>
       <Input
-        pattern={"^[a-zA-Zа-яА-ЯёЁ\s\-_]+$"}
         errorMessage="Имя должно состоять только из букв"
         value={name}
         onChange={(event) => gameStore.setFormName(event.target.value)}
@@ -65,7 +84,7 @@ export const LoginPage = observer(() => {
         <Button
           isDisabled={disableCreate}
           endContent={<PlusCircleIcon className="size-6" />}
-          onPress={() => gameStore.createRoom()}
+          type="submit"
           fullWidth
           color="primary"
         >
@@ -76,13 +95,18 @@ export const LoginPage = observer(() => {
         <Button
           isDisabled={disableJoin}
           endContent={<ArrowLeftEndOnRectangleIcon className="size-6" />}
-          onPress={() => gameStore.joinRoom()}
+          type="submit"
           fullWidth
           color="primary"
         >
           Войти
         </Button>
       ) : null}
-    </div>
+      {isMobile ? (
+        <div className="text-large">
+          Разрешение экрана не поддерживается😞, но можно попробовать
+        </div>
+      ) : null}
+    </Form>
   );
 });

@@ -1,5 +1,11 @@
 import { makeAutoObservable } from "mobx";
-import { WebGameEvents, type TMessage, type TUser } from "../../types";
+import {
+  WebGameEvents,
+  WebGameStates,
+  type TMessage,
+  type TRoom,
+  type TUser,
+} from "../../types";
 import { socket } from "../../socket/socket";
 import { LoginType } from "./types";
 
@@ -14,6 +20,17 @@ type TChat = {
   yourMessage: string;
 };
 
+type TGameState = {
+  imageConstructor: {
+    src: string | undefined;
+    hasError: boolean;
+  };
+  memeConstructor: {
+    imageSrc: string;
+    memeText: string;
+  };
+};
+
 const defaultLoginForm: TLoginForm = {
   name: "",
   roomId: "",
@@ -25,19 +42,37 @@ const defaultChatSate: TChat = {
   yourMessage: "",
 };
 
+const defautlGameState: TGameState = {
+  imageConstructor: {
+    src: undefined,
+    hasError: false,
+  },
+  memeConstructor: {
+    imageSrc: "",
+    memeText: "",
+  },
+};
+
+const defaultRoomSatet: TRoom = {
+  users: [],
+  memes: [],
+  state: WebGameStates.WaitStart,
+  roomCode: "",
+};
+
 class GameStore {
-  roomId: string = "";
   currentUser: TUser | undefined = undefined;
-  users: TUser[] = [];
   loginForm = defaultLoginForm;
   chat: TChat = defaultChatSate;
+  game: TGameState = defautlGameState;
+  room: TRoom = defaultRoomSatet;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  public setUsers(users: TUser[]) {
-    this.users = users;
+  public setRoom(room: TRoom) {
+    this.room = room;
   }
 
   public setCurrentUser(user: TUser | undefined) {
@@ -48,11 +83,10 @@ class GameStore {
     if (this.currentUser === undefined) return;
 
     socket.emit(WebGameEvents.LeaveRoom, {
-      roomCode: this.roomId,
+      roomCode: this.room.roomCode,
       userId: this.currentUser.id,
     });
 
-    this.roomId = "";
     this.currentUser = undefined;
   }
 
@@ -66,10 +100,6 @@ class GameStore {
 
   public setFormRoomId(roomId: string) {
     this.loginForm.roomId = roomId;
-  }
-
-  public setRoomId(roomId: string) {
-    this.roomId = roomId;
   }
 
   public setYourMessage(message: string) {
@@ -91,6 +121,21 @@ class GameStore {
 
   public createRoom() {
     socket.emit(WebGameEvents.CreateRoom, this.loginForm.name);
+
+    this.loginForm = defaultLoginForm;
+  }
+
+  public setConstructorImageSrc(src?: string) {
+    this.game.imageConstructor.hasError = false;
+    this.game.imageConstructor.src = src;
+  }
+
+  public setConstructorImageError(hasError: boolean) {
+    this.game.imageConstructor.hasError = hasError;
+  }
+
+  public setMemeText(text: string) {
+    this.game.memeConstructor.memeText = text;
   }
 
   public sendMessage() {
@@ -101,10 +146,63 @@ class GameStore {
         content: this.chat.yourMessage,
         sender: this.currentUser,
       },
-      roomCode: this.roomId,
+      roomCode: this.room.roomCode,
     });
 
     this.chat.yourMessage = "";
+  }
+
+  public finishImageCreate() {
+    const myMeme = this.room.memes.find(
+      (meme) => meme.authorId === this.currentUser?.id
+    );
+
+    if (myMeme === undefined) return;
+
+    socket.emit(WebGameEvents.CreateImage, {
+      roomCode: this.room.roomCode,
+      meme: {
+        ...myMeme,
+        src: this.game.imageConstructor.src,
+      },
+    });
+  }
+
+  public funishMemeCreate() {
+    const myMeme = this.room.memes.find(
+      (meme) => meme.forUserId === this.currentUser?.id
+    );
+
+    if (myMeme === undefined) return;
+
+    socket.emit(WebGameEvents.CreateMeme, {
+      roomCode: this.room.roomCode,
+      meme: {
+        ...myMeme,
+        text: this.game.memeConstructor.memeText,
+      },
+    });
+  }
+
+  public startGame() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.CreatingImage,
+    });
+  }
+
+  public goToMemeCreation() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.CreatingMeme,
+    });
+  }
+
+  public goToMemeResults() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.WatchMeme,
+    });
   }
 
   public reciveMessage(message: TMessage) {
