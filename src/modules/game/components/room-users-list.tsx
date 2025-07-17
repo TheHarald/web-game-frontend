@@ -3,11 +3,11 @@ import { gameStore } from "../game-store";
 import { RoomUserItem } from "./room-user-item";
 
 export const RoomUsersList = observer(() => {
-  const { users } = gameStore;
+  const { users } = gameStore.room;
 
   return (
     <div
-      style={{ width: 320 }}
+      style={{ width: 320, height: "calc(100vh - 20%)" }}
       className="flex flex-col gap-2 bg-neutral-900 rounded-lg p-4"
     >
       <h1 className="text-xl font-medium">Игроки</h1>

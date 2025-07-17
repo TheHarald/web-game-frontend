@@ -3,6 +3,7 @@ import {
   WebGameEvents,
   WebGameStates,
   type TMessage,
+  type TRoom,
   type TUser,
 } from "../../types";
 import { socket } from "../../socket/socket";
@@ -56,20 +57,32 @@ const defautlGameState: TGameState = {
   memes: [],
 };
 
+const defaultRoomSatet: TRoom = {
+  users: [],
+  memes: [],
+  state: WebGameStates.WaitStart,
+  roomCode: "",
+};
+
 class GameStore {
-  roomId: string = "";
+  // roomId: string = "";
   currentUser: TUser | undefined = undefined;
-  users: TUser[] = [];
+  // users: TUser[] = [];
   loginForm = defaultLoginForm;
   chat: TChat = defaultChatSate;
   game: TGameState = defautlGameState;
+  room: TRoom = defaultRoomSatet;
 
   constructor() {
     makeAutoObservable(this);
   }
 
-  public setUsers(users: TUser[]) {
-    this.users = users;
+  // public setUsers(users: TUser[]) {
+  //   this.users = users;
+  // }
+
+  public setRoom(room: TRoom) {
+    this.room = room;
   }
 
   public setCurrentUser(user: TUser | undefined) {
@@ -80,11 +93,11 @@ class GameStore {
     if (this.currentUser === undefined) return;
 
     socket.emit(WebGameEvents.LeaveRoom, {
-      roomCode: this.roomId,
+      roomCode: this.room.roomCode,
       userId: this.currentUser.id,
     });
 
-    this.roomId = "";
+    // this.roomId = "";
     this.currentUser = undefined;
   }
 
@@ -100,9 +113,9 @@ class GameStore {
     this.loginForm.roomId = roomId;
   }
 
-  public setRoomId(roomId: string) {
-    this.roomId = roomId;
-  }
+  // public setRoomId(roomId: string) {
+  //   this.roomId = roomId;
+  // }
 
   public setYourMessage(message: string) {
     this.chat.yourMessage = message;
@@ -148,10 +161,18 @@ class GameStore {
         content: this.chat.yourMessage,
         sender: this.currentUser,
       },
-      roomCode: this.roomId,
+      roomCode: this.room.roomCode,
     });
 
     this.chat.yourMessage = "";
+  }
+
+  public startGame() {
+    socket.emit(WebGameEvents.StartGame, this.room.roomCode);
+  }
+
+  public setGameState(state: WebGameStates) {
+    this.game.state = state;
   }
 
   public reciveMessage(message: TMessage) {
