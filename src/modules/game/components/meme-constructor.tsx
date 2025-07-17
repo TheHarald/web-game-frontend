@@ -4,7 +4,15 @@ import { Button, Image, Input } from "@heroui/react";
 import { gameStore } from "../game-store";
 
 export const MemeConstructor = observer(() => {
-  const { imageSrc, memeText } = gameStore.game.memeConstructor;
+  const { room, game, currentUser } = gameStore;
+  const { memeText } = game.memeConstructor;
+  const { memes } = room;
+
+  const memeForMe = memes.find((meme) => meme.forUserId === currentUser?.id);
+
+  const disableMemeCreate = !memeText || Boolean(memeForMe?.text);
+
+  console.log(memeForMe);
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -14,7 +22,7 @@ export const MemeConstructor = observer(() => {
         isZoomed
         fallbackSrc={"/meme-fallback.png"}
         alt="Картинка для мема"
-        src={imageSrc}
+        src={memeForMe?.src}
         width={320}
         height={320}
       />
@@ -25,7 +33,11 @@ export const MemeConstructor = observer(() => {
         maxLength={30}
         onChange={(event) => gameStore.setMemeText(event.target.value)}
       />
-      <Button isDisabled={!memeText} color="primary">
+      <Button
+        onPress={() => gameStore.funishMemeCreate()}
+        isDisabled={disableMemeCreate}
+        color="primary"
+      >
         Отправить
       </Button>
     </div>

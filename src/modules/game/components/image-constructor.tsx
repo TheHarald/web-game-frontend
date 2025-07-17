@@ -5,7 +5,9 @@ import { PhotoIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { WhereGetImageTip } from "./where-get-image-tip";
 
 export const ImageConstructor = observer(() => {
-  const { src, hasError } = gameStore.game.imageConstructor;
+  const { currentUser, room, game } = gameStore;
+  const { imageConstructor } = game;
+  const { src, hasError } = imageConstructor;
 
   const setImageFromClipboard = async () => {
     const text = await navigator.clipboard.readText();
@@ -24,6 +26,11 @@ export const ImageConstructor = observer(() => {
     gameStore.setConstructorImageSrc(undefined);
     gameStore.setConstructorImageError(true);
   };
+
+  const myImage = room.memes.find((meme) => meme.authorId === currentUser?.id);
+
+  const disableCreate = Boolean(myImage?.src || hasError || src === undefined);
+  const disableDelete = Boolean(myImage?.src) || !src;
 
   return (
     <div className="flex flex-col gap-4 items-center">
@@ -50,7 +57,7 @@ export const ImageConstructor = observer(() => {
           </Button>
           <Button
             color="danger"
-            isDisabled={!src}
+            isDisabled={disableDelete}
             onPress={() => gameStore.setConstructorImageSrc(undefined)}
             isIconOnly
           >
@@ -59,7 +66,11 @@ export const ImageConstructor = observer(() => {
           <WhereGetImageTip />
         </div>
       </div>
-      <Button isDisabled={hasError || src === undefined} color="primary">
+      <Button
+        onPress={() => gameStore.finishImageCreate()}
+        isDisabled={disableCreate}
+        color="primary"
+      >
         Отправить
       </Button>
     </div>

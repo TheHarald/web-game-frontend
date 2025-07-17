@@ -21,7 +21,6 @@ type TChat = {
 };
 
 type TGameState = {
-  state: WebGameStates;
   imageConstructor: {
     src: string | undefined;
     hasError: boolean;
@@ -30,7 +29,6 @@ type TGameState = {
     imageSrc: string;
     memeText: string;
   };
-  memes: unknown[];
 };
 
 const defaultLoginForm: TLoginForm = {
@@ -45,7 +43,6 @@ const defaultChatSate: TChat = {
 };
 
 const defautlGameState: TGameState = {
-  state: WebGameStates.WaitStart,
   imageConstructor: {
     src: undefined,
     hasError: false,
@@ -54,7 +51,6 @@ const defautlGameState: TGameState = {
     imageSrc: "",
     memeText: "",
   },
-  memes: [],
 };
 
 const defaultRoomSatet: TRoom = {
@@ -156,15 +152,57 @@ class GameStore {
     this.chat.yourMessage = "";
   }
 
-  public startGame() {
-    socket.emit(WebGameEvents.ChnageGameState, {
+  public finishImageCreate() {
+    const myMeme = this.room.memes.find(
+      (meme) => meme.authorId === this.currentUser?.id
+    );
+
+    if (myMeme === undefined) return;
+
+    socket.emit(WebGameEvents.CreateImage, {
       roomCode: this.room.roomCode,
-      state: WebGameStates.CreateImage,
+      meme: {
+        ...myMeme,
+        src: this.game.imageConstructor.src,
+      },
     });
   }
 
-  public setGameState(state: WebGameStates) {
-    this.game.state = state;
+  public funishMemeCreate() {
+    const myMeme = this.room.memes.find(
+      (meme) => meme.forUserId === this.currentUser?.id
+    );
+
+    if (myMeme === undefined) return;
+
+    socket.emit(WebGameEvents.CreateMeme, {
+      roomCode: this.room.roomCode,
+      meme: {
+        ...myMeme,
+        text: this.game.memeConstructor.memeText,
+      },
+    });
+  }
+
+  public startGame() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.CreatingImage,
+    });
+  }
+
+  public goToMemeCreation() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.CreatingMeme,
+    });
+  }
+
+  public goToMemeResults() {
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.WatchMeme,
+    });
   }
 
   public reciveMessage(message: TMessage) {

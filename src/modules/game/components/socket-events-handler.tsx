@@ -34,7 +34,17 @@ export function SocketEventsHandler() {
     });
 
     socket.on(WebGameEvents.GameStateChanged, (room) => {
-      gameStore.setGameState(room.state);
+      console.log(WebGameEvents.GameStateChanged, room);
+      gameStore.setRoom(room);
+    });
+
+    socket.on(WebGameEvents.ImageCreated, (room) => {
+      console.log(WebGameEvents.ImageCreated, room);
+      gameStore.setRoom(room);
+    });
+
+    socket.on(WebGameEvents.MemeCreated, (room) => {
+      console.log(WebGameEvents.MemeCreated, room);
       gameStore.setRoom(room);
     });
 
