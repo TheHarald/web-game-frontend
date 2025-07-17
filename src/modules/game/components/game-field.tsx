@@ -1,6 +1,6 @@
-// import { ImageConstructor } from "./image-constructor";
+import { ImageConstructor } from "./image-constructor";
 import { observer } from "mobx-react-lite";
-import { MemeConstructor } from "./meme-constructor";
+// import { MemeConstructor } from "./meme-constructor";
 import { gameStore } from "../game-store";
 import { WebGameStates } from "../../../types";
 import { Button } from "@heroui/react";
@@ -12,7 +12,6 @@ export const GameField = observer(() => {
   return (
     <div className="w-100 h-100 flex items-center justify-center flex-1">
       <div className="text-2xl font-bold">
-        {/* <ImageConstructor /> */}
         {/* <MemeConstructor /> */}
 
         {(() => {
@@ -31,6 +30,10 @@ export const GameField = observer(() => {
                   ) : null}
                 </div>
               );
+            }
+
+            case WebGameStates.CreateImage: {
+              return <ImageConstructor />;
             }
 
             default: {

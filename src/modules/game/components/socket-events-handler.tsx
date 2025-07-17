@@ -33,8 +33,9 @@ export function SocketEventsHandler() {
       gameStore.reciveMessage(message);
     });
 
-    socket.on(WebGameEvents.GameStateChanged, (state) => {
-      gameStore.setGameState(state);
+    socket.on(WebGameEvents.GameStateChanged, (room) => {
+      gameStore.setGameState(room.state);
+      gameStore.setRoom(room);
     });
 
     return () => {

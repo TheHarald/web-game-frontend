@@ -65,9 +65,7 @@ const defaultRoomSatet: TRoom = {
 };
 
 class GameStore {
-  // roomId: string = "";
   currentUser: TUser | undefined = undefined;
-  // users: TUser[] = [];
   loginForm = defaultLoginForm;
   chat: TChat = defaultChatSate;
   game: TGameState = defautlGameState;
@@ -76,10 +74,6 @@ class GameStore {
   constructor() {
     makeAutoObservable(this);
   }
-
-  // public setUsers(users: TUser[]) {
-  //   this.users = users;
-  // }
 
   public setRoom(room: TRoom) {
     this.room = room;
@@ -97,7 +91,6 @@ class GameStore {
       userId: this.currentUser.id,
     });
 
-    // this.roomId = "";
     this.currentUser = undefined;
   }
 
@@ -112,10 +105,6 @@ class GameStore {
   public setFormRoomId(roomId: string) {
     this.loginForm.roomId = roomId;
   }
-
-  // public setRoomId(roomId: string) {
-  //   this.roomId = roomId;
-  // }
 
   public setYourMessage(message: string) {
     this.chat.yourMessage = message;
@@ -168,7 +157,10 @@ class GameStore {
   }
 
   public startGame() {
-    socket.emit(WebGameEvents.StartGame, this.room.roomCode);
+    socket.emit(WebGameEvents.ChnageGameState, {
+      roomCode: this.room.roomCode,
+      state: WebGameStates.CreateImage,
+    });
   }
 
   public setGameState(state: WebGameStates) {
