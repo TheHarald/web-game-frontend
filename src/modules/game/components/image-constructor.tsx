@@ -3,16 +3,12 @@ import { addToast, Button, Image } from "@heroui/react";
 import { gameStore } from "../game-store";
 import { PhotoIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { WhereGetImageTip } from "./where-get-image-tip";
+import { ImageModal } from "./image-modal";
 
 export const ImageConstructor = observer(() => {
   const { currentUser, room, game } = gameStore;
   const { imageConstructor } = game;
   const { src, hasError } = imageConstructor;
-
-  const setImageFromClipboard = async () => {
-    const text = await navigator.clipboard.readText();
-    gameStore.setConstructorImageSrc(text);
-  };
 
   const iamgeErrorHandler = () => {
     if (hasError) return;
@@ -23,8 +19,8 @@ export const ImageConstructor = observer(() => {
       color: "danger",
     });
 
-    gameStore.setConstructorImageSrc(undefined);
-    gameStore.setConstructorImageError(true);
+    gameStore.setImageModalSrc(undefined);
+    gameStore.resetConstructorImage();
   };
 
   const myImage = room.memes.find((meme) => meme.authorId === currentUser?.id);
@@ -49,7 +45,7 @@ export const ImageConstructor = observer(() => {
         <div className="flex flex-col gap-2">
           <Button
             isDisabled={Boolean(src)}
-            onPress={setImageFromClipboard}
+            onPress={() => gameStore.setImageModalOpen(true)}
             color="primary"
             isIconOnly
           >
@@ -58,7 +54,7 @@ export const ImageConstructor = observer(() => {
           <Button
             color="danger"
             isDisabled={disableDelete}
-            onPress={() => gameStore.setConstructorImageSrc(undefined)}
+            onPress={() => gameStore.resetConstructorImage()}
             isIconOnly
           >
             <TrashIcon className="size-6" />
@@ -73,6 +69,7 @@ export const ImageConstructor = observer(() => {
       >
         Отправить
       </Button>
+      <ImageModal />
     </div>
   );
 });

@@ -31,6 +31,16 @@ type TGameState = {
   };
 };
 
+type TImageModal = {
+  src: string | undefined;
+  open: boolean;
+};
+
+const defaultImageModalState: TImageModal = {
+  src: undefined,
+  open: false,
+};
+
 const defaultLoginForm: TLoginForm = {
   name: "",
   roomId: "",
@@ -66,6 +76,7 @@ class GameStore {
   chat: TChat = defaultChatSate;
   game: TGameState = defautlGameState;
   room: TRoom = defaultRoomSatet;
+  imageModal: TImageModal = defaultImageModalState;
 
   constructor() {
     makeAutoObservable(this);
@@ -92,6 +103,14 @@ class GameStore {
 
   public setFormName(name: string) {
     this.loginForm.name = name;
+  }
+
+  public setImageModalOpen(open: boolean) {
+    this.imageModal.open = open;
+  }
+
+  public setImageModalSrc(src?: string) {
+    this.imageModal.src = src;
   }
 
   public setFormLoginType(type: LoginType) {
@@ -125,9 +144,18 @@ class GameStore {
     this.loginForm = defaultLoginForm;
   }
 
-  public setConstructorImageSrc(src?: string) {
+  public setConstructorImageSrc() {
     this.game.imageConstructor.hasError = false;
-    this.game.imageConstructor.src = src;
+    this.game.imageConstructor.src = this.imageModal.src;
+    this.imageModal.src = "";
+    this.imageModal.open = false;
+  }
+
+  public resetConstructorImage() {
+    this.game.imageConstructor = {
+      src: undefined,
+      hasError: false,
+    };
   }
 
   public setConstructorImageError(hasError: boolean) {

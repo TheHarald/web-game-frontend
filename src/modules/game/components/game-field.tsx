@@ -4,7 +4,7 @@ import { MemeConstructor } from "./meme-constructor";
 import { gameStore } from "../game-store";
 import { WebGameStates } from "../../../types";
 import { Button } from "@heroui/react";
-import { GameMemeResults } from "./game-meme-reults";
+import { GameMemeResults } from "./game-meme-results";
 
 export const GameField = observer(() => {
   const { currentUser, room } = gameStore;
