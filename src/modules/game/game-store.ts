@@ -83,6 +83,10 @@ class GameStore {
   }
 
   public setRoom(room: TRoom) {
+    if (room.state === WebGameStates.CreatingMeme) {
+      gameStore.resetConstructorImage();
+    }
+
     this.room = room;
   }
 

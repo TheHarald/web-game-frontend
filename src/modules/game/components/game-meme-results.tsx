@@ -14,18 +14,6 @@ export const GameMemeResults = observer(() => {
       {memes.map((meme) => (
         <GameMeme key={meme.id} meme={meme} />
       ))}
-      {memes.map((meme) => (
-        <GameMeme key={meme.id} meme={meme} />
-      ))}
-      {memes.map((meme) => (
-        <GameMeme key={meme.id} meme={meme} />
-      ))}
-      {memes.map((meme) => (
-        <GameMeme key={meme.id} meme={meme} />
-      ))}
-      {memes.map((meme) => (
-        <GameMeme key={meme.id} meme={meme} />
-      ))}
     </ScrollShadow>
   );
 });

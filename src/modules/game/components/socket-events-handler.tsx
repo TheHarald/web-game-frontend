@@ -35,6 +35,7 @@ export function SocketEventsHandler() {
 
     socket.on(WebGameEvents.GameStateChanged, (room) => {
       console.log(WebGameEvents.GameStateChanged, room);
+
       gameStore.setRoom(room);
     });
 
