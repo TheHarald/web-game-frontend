@@ -4,6 +4,7 @@ import { gameStore } from "../game-store";
 import { spawnConfetti } from "../../../utils/confeti";
 import { socket } from "../../../socket/socket";
 import { settings } from "../../../settings/settings";
+import { addToast } from "@heroui/react";
 
 export function SocketEventsHandler() {
   useEffect(() => {
@@ -47,6 +48,14 @@ export function SocketEventsHandler() {
     socket.on(WebGameEvents.MemeCreated, (room) => {
       console.log(WebGameEvents.MemeCreated, room);
       gameStore.setRoom(room);
+    });
+
+    socket.on(WebGameEvents.SomeError, (error) => {
+      addToast({
+        title: "Произовшла ошибка",
+        description: error,
+        color: "danger",
+      });
     });
 
     return () => {
