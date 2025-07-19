@@ -1,4 +1,4 @@
-import { Button, Snippet } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { observer } from "mobx-react-lite";
 import { gameStore } from "../game-store";
 import { GameCounter } from "./game-counter";
