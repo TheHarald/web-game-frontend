@@ -3,17 +3,11 @@ import { observer } from "mobx-react-lite";
 import { MemeConstructor } from "./meme-constructor";
 import { gameStore } from "../game-store";
 import { WebGameStates } from "../../../types";
-import { Button } from "@heroui/react";
 import { GameMemeResults } from "./game-meme-results";
 
 export const GameField = observer(() => {
-  const { currentUser, room } = gameStore;
-  const { memes, state } = room;
-
-  const isEveryoneCompleteImage = memes.every((meme) => meme.src);
-  const isEveryoneCompleteMeme = memes.every((meme) => meme.text);
-
-  const isAdmin = currentUser?.isAdmin;
+  const { room } = gameStore;
+  const { state } = room;
 
   return (
     <div className="w-100 h-100 flex items-center justify-center flex-1">
@@ -24,14 +18,6 @@ export const GameField = observer(() => {
               return (
                 <div className="flex flex-col gap-4">
                   <div>Ожидание начала игры</div>
-                  {currentUser?.isAdmin ? (
-                    <Button
-                      onPress={() => gameStore.startGame()}
-                      color="primary"
-                    >
-                      Начать
-                    </Button>
-                  ) : null}
                 </div>
               );
             }
@@ -40,15 +26,6 @@ export const GameField = observer(() => {
               return (
                 <div className="flex flex-col gap-8 items-center">
                   <ImageConstructor />
-                  {isAdmin ? (
-                    <Button
-                      onPress={() => gameStore.goToMemeCreation()}
-                      color="success"
-                      isDisabled={!isEveryoneCompleteImage}
-                    >
-                      К созданию мемов
-                    </Button>
-                  ) : null}
                 </div>
               );
             }
@@ -57,15 +34,6 @@ export const GameField = observer(() => {
               return (
                 <div className="flex flex-col gap-8 items-center">
                   <MemeConstructor />
-                  {isAdmin ? (
-                    <Button
-                      onPress={() => gameStore.goToMemeResults()}
-                      color="success"
-                      isDisabled={!isEveryoneCompleteMeme}
-                    >
-                      К прсоомтру результатов
-                    </Button>
-                  ) : null}
                 </div>
               );
             }

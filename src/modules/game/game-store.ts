@@ -82,9 +82,14 @@ class GameStore {
     makeAutoObservable(this);
   }
 
+  get isIAmdin() {
+    return this.currentUser?.isAdmin ?? false;
+  }
+
   public setRoom(room: TRoom) {
-    if (room.state === WebGameStates.CreatingMeme) {
-      gameStore.resetConstructorImage();
+    if (room.state === WebGameStates.WatchMeme) {
+      this.imageModal = defaultImageModalState;
+      this.game = defautlGameState;
     }
 
     this.room = room;
@@ -217,21 +222,21 @@ class GameStore {
   }
 
   public startGame() {
-    socket.emit(WebGameEvents.ChnageGameState, {
+    socket.emit(WebGameEvents.ChangeGameState, {
       roomCode: this.room.roomCode,
       state: WebGameStates.CreatingImage,
     });
   }
 
   public goToMemeCreation() {
-    socket.emit(WebGameEvents.ChnageGameState, {
+    socket.emit(WebGameEvents.ChangeGameState, {
       roomCode: this.room.roomCode,
       state: WebGameStates.CreatingMeme,
     });
   }
 
   public goToMemeResults() {
-    socket.emit(WebGameEvents.ChnageGameState, {
+    socket.emit(WebGameEvents.ChangeGameState, {
       roomCode: this.room.roomCode,
       state: WebGameStates.WatchMeme,
     });
@@ -239,6 +244,22 @@ class GameStore {
 
   public reciveMessage(message: TMessage) {
     this.chat.messages.push(message);
+  }
+
+  public restartGame() {
+    socket.emit(WebGameEvents.RestartGame, {
+      roomCode: this.room.roomCode,
+    });
+  }
+
+  public reset() {
+    this.room = defaultRoomSatet;
+    this.currentUser = undefined;
+    this.loginForm = defaultLoginForm;
+    this.chat = defaultChatSate;
+    this.game = defautlGameState;
+    this.room = defaultRoomSatet;
+    this.imageModal = defaultImageModalState;
   }
 }
 

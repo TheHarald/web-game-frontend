@@ -4,7 +4,10 @@ import { GameMeme } from "./game-meme";
 import { ScrollShadow } from "@heroui/react";
 
 export const GameMemeResults = observer(() => {
+  const { isIAmdin } = gameStore;
   const { memes } = gameStore.room;
+
+  console.log(isIAmdin);
 
   return (
     <ScrollShadow

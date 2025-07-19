@@ -2,8 +2,10 @@ import { Button, Snippet } from "@heroui/react";
 import { observer } from "mobx-react-lite";
 import { gameStore } from "../game-store";
 import { GameCounter } from "./game-counter";
+import { AdminButtons } from "./game-admin-buttons";
 
 export const RoomHeader = observer(() => {
+  const { isIAmdin } = gameStore;
   const { roomCode, state } = gameStore.room;
 
   return (
@@ -16,7 +18,8 @@ export const RoomHeader = observer(() => {
         <GameCounter />
       </div>
       <div className="flex flex-row items-center gap-6">
-        <Snippet symbol="">{roomCode}</Snippet>
+        {isIAmdin ? <AdminButtons /> : null}
+        <div className="text-3xl font-bold">{roomCode}</div>
         <Button color="danger" onPress={() => gameStore.leaveRoom()}>
           Выйти
         </Button>

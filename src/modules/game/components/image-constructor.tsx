@@ -23,6 +23,8 @@ export const ImageConstructor = observer(() => {
     gameStore.resetConstructorImage();
   };
 
+  console.log("image");
+
   const myImage = room.memes.find((meme) => meme.authorId === currentUser?.id);
 
   const disableCreate = Boolean(myImage?.src || hasError || src === undefined);
