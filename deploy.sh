@@ -3,7 +3,8 @@
 # Конфигурация
 IMAGE_NAME="web-game-frontend"
 CONTAINER_NAME="web-game-frontend"
-PORT="3000"
+PORT=3000
+TEMP_PORT=3099  # Используем другой порт для временного контейнера
 TEMP_CONTAINER_NAME="${CONTAINER_NAME}-temp"
 
 # Функция для обработки ошибок
@@ -24,9 +25,9 @@ git pull
 echo "Building new Docker image..."
 docker build -t $IMAGE_NAME:latest .
 
-# 3. Запускаем новый контейнер временно для проверки
+# 3. Запускаем новый контейнер временно на другом порту
 echo "Starting new container for testing..."
-docker run -d -p ${PORT}99:3000 --name $TEMP_CONTAINER_NAME $IMAGE_NAME
+docker run -d -p $TEMP_PORT:3000 --name $TEMP_CONTAINER_NAME $IMAGE_NAME
 
 # 4. Проверяем здоровье (можно добавить curl проверку)
 echo "Waiting for container to start..."
@@ -41,8 +42,10 @@ if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
     docker rm $CONTAINER_NAME >/dev/null
 fi
 
-# Переименовываем временный контейнер в основной
-docker rename $TEMP_CONTAINER_NAME $CONTAINER_NAME
+# Останавливаем временный контейнер и запускаем на основном порту
+docker stop $TEMP_CONTAINER_NAME >/dev/null
+docker rm $TEMP_CONTAINER_NAME >/dev/null
+docker run -d -p $PORT:3000 --name $CONTAINER_NAME $IMAGE_NAME
 
 # 6. Чистим старые образы (старше 1 дня)
 echo "Cleaning up old images..."
